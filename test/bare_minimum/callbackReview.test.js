@@ -46,6 +46,7 @@ describe('Callback review', function() {
     var someNonExistantWebsite = nock('https::///thisIsNoUrl.comedy');
 
     it('should accept a callback as its last argument', function(done) {
+
       google.get('/').reply(200);
 
       getStatusCode('https://google.com', function() {
@@ -60,6 +61,9 @@ describe('Callback review', function() {
       someNonExistantWebsite.get('/').reply(404);
 
       getStatusCode('https::///thisIsNoUrl.comedy', function(err, statusCode) {
+
+        console.log('err', err);
+
         expect(err.message).to.contain('Invalid URI');
         expect(statusCode).to.not.exist;
         done();
