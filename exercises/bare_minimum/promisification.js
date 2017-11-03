@@ -36,12 +36,10 @@ var getGitHubProfileAsync = function(user, callback) {
   request = Promise.promisifyAll(require('request'));
   return request.getAsync(options)
     .then(function(res) {
-      console.log('res.body inside promise');
-      // return res.body;
-      if (res.body.message) {
+      if (res.body && res.body.message) {
         throw new Error('Failed to get GitHub profile: ' + res.body.message);
       } else {
-        return (null, res.body);
+        return res.body;
       }
     })
     .catch(callback);
@@ -57,7 +55,14 @@ var generateRandomToken = function(callback) {
   });
 };
 
-var generateRandomTokenAsync; // TODO
+var generateRandomTokenAsync = function(callback) {
+  crypto = Promise.promisifyAll(require('crypto'));
+  return crypto.randomBytesAsync(20)
+    .then(function(res) {
+      return (null, res.toString('hex'));
+
+    }).catch(callback);
+};
 
 
 // (3) Asyncronous file manipulation
@@ -75,7 +80,18 @@ var readFileAndMakeItFunny = function(filePath, callback) {
   });
 };
 
-var readFileAndMakeItFunnyAsync; // TODO
+var readFileAndMakeItFunnyAsync = function(filePath, callback) {
+  fs = Promise.promisifyAll(require('fs'));
+  return fs.readFileAsync(filePath, 'utf8')
+    .then(function(file) {
+      var funnyFile = file.split('\n')
+        .map(function(line) {
+          return line + ' lol';
+        })
+        .join('\n');
+      return funnyFile;
+    }).catch(callback);
+};
 
 // Export these functions so we can test them and reuse them in later exercises
 module.exports = {
